@@ -1,0 +1,137 @@
+<div class="page-container">
+  <div class="content-header">
+    <h2>Cuentas</h2>
+  </div>
+
+  <app-search-bar 
+    placeholder="Buscar por número de cuenta, tipo, cliente..."
+    (searchChange)="onSearch($event)"
+    (newClick)="onNewCuenta()">
+  </app-search-bar>
+
+  <div class="table-container">
+    <div class="table-placeholder" *ngIf="filteredCuentas.length === 0">
+      <p>No hay cuentas registradas</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar una cuenta</p>
+    </div>
+    
+    <table *ngIf="filteredCuentas.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Número de Cuenta</th>
+          <th>Tipo de Cuenta</th>
+          <th>Saldo Inicial</th>
+          <th>Cliente</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cuenta of filteredCuentas">
+          <td>{{ cuenta.NumeroCuenta }}</td>
+          <td>{{ cuenta.TipoCuenta }}</td>
+          <td>{{ cuenta.SaldoInicial | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ cuenta.NombreCliente || 'N/A' }}</td>
+          <td>
+            <span class="status" [class.active]="cuenta.Estado" [class.inactive]="!cuenta.Estado">
+              {{ cuenta.Estado ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="Editar" (click)="onEditCuenta(cuenta)">✏️</button>
+              <button class="btn-icon" 
+                      [title]="!cuenta.Estado ? 'No se puede eliminar una cuenta inactiva' : 'Eliminar'" 
+                      (click)="onDeleteCuenta(cuenta)"
+                      [disabled]="!cuenta.Estado"
+                      [class.disabled]="!cuenta.Estado">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination" *ngIf="totalItems > 0">
+      <div class="pagination-info">
+        <span>Mostrando {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} de {{ totalItems }} cuentas</span>
+        <div class="page-size-selector">
+          <label>Mostrar:</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [value]="10">10</option>
+            <option [value]="15">15</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span>por página</span>
+        </div>
+      </div>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(1)">
+          Primera
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          Anterior
+        </button>
+        
+        <span class="page-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            class="pagination-btn page-number"
+            [class.active]="page === currentPage"
+            [disabled]="page === '...'"
+            (click)="page !== '...' && onPageChange(+page)">
+            {{ page }}
+          </button>
+        </span>
+        
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)">
+          Siguiente
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(totalPages)">
+          Última
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-modal-cuenta
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [cuentaToEdit]="selectedCuenta"
+    (closeModal)="onCloseModal()"
+    (saveCuenta)="onSaveCuenta($event)">
+  </app-modal-cuenta>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
+
+  <app-confirmation-modal
+    [isOpen]="isConfirmationModalOpen"
+    title="Eliminar Cuenta"
+    [message]="'¿Está seguro de que desea eliminar la cuenta ' + (cuentaToDelete?.NumeroCuenta || '') + '?'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation-modal>
+</div>

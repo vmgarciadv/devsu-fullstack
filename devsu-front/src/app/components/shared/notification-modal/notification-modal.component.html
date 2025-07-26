@@ -1,0 +1,20 @@
+<div class="notification-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="notification-content" (click)="$event.stopPropagation()">
+    <div class="notification-icon">
+      <svg *ngIf="type === 'success'" width="60" height="60" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+        <path d="M8 12l2 2 4-4" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg *ngIf="type === 'error'" width="60" height="60" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#F44336" stroke-width="2"/>
+        <path d="M15 9l-6 6M9 9l6 6" stroke="#F44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h3 class="notification-title">{{ title }}</h3>
+    
+    <p class="notification-message" *ngIf="message">{{ message }}</p>
+    
+    <button class="notification-button" (click)="closeModal()">Aceptar</button>
+  </div>
+</div>

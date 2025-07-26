@@ -1,0 +1,145 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ mode === 'create' ? 'Nuevo Cliente' : 'Editar Cliente' }}</h3>
+      <button class="close-button" (click)="onClose()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input 
+            type="text" 
+            id="nombre" 
+            name="nombre"
+            [(ngModel)]="cliente.Nombre"
+            (ngModelChange)="onFieldChange('Nombre')"
+            (blur)="onFieldChange('Nombre')"
+            [class.error]="touched.Nombre && errors.Nombre"
+            placeholder="Ingrese el nombre completo"
+            maxlength="30"
+            required>
+          <span class="error-message" *ngIf="touched.Nombre && errors.Nombre">
+            {{ errors.Nombre }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="identificacion">Identificación</label>
+          <input 
+            type="text" 
+            id="identificacion" 
+            name="identificacion"
+            [(ngModel)]="cliente.Identificacion"
+            (ngModelChange)="onFieldChange('Identificacion')"
+            (blur)="onFieldChange('Identificacion')"
+            [class.error]="touched.Identificacion && errors.Identificacion"
+            placeholder="Ingrese la identificación"
+            maxlength="10"
+            required>
+          <span class="error-message" *ngIf="touched.Identificacion && errors.Identificacion">
+            {{ errors.Identificacion }}
+          </span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="genero">Género</label>
+            <select id="genero" name="genero" 
+              [(ngModel)]="cliente.Genero"
+              (ngModelChange)="onFieldChange('Genero')"
+              (blur)="onFieldChange('Genero')"
+              [class.error]="touched.Genero && errors.Genero"
+              required>
+              <option value="">Seleccione</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+            <span class="error-message" *ngIf="touched.Genero && errors.Genero">
+              {{ errors.Genero }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="edad">Edad</label>
+            <input 
+              type="number" 
+              id="edad" 
+              name="edad"
+              [(ngModel)]="cliente.Edad"
+              (ngModelChange)="onFieldChange('Edad')"
+              (blur)="onFieldChange('Edad')"
+              [class.error]="touched.Edad && errors.Edad"
+              placeholder="Edad"
+              min="1"
+              max="150"
+              required>
+            <span class="error-message" *ngIf="touched.Edad && errors.Edad">
+              {{ errors.Edad }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input 
+            type="text" 
+            id="direccion" 
+            name="direccion"
+            [(ngModel)]="cliente.Direccion"
+            (ngModelChange)="onFieldChange('Direccion')"
+            (blur)="onFieldChange('Direccion')"
+            [class.error]="touched.Direccion && errors.Direccion"
+            placeholder="Ingrese la dirección"
+            maxlength="100"
+            required>
+          <span class="error-message" *ngIf="touched.Direccion && errors.Direccion">
+            {{ errors.Direccion }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input 
+            type="tel" 
+            id="telefono" 
+            name="telefono"
+            [(ngModel)]="cliente.Telefono"
+            (ngModelChange)="onFieldChange('Telefono')"
+            (blur)="onFieldChange('Telefono')"
+            [class.error]="touched.Telefono && errors.Telefono"
+            placeholder="Ingrese el teléfono"
+            maxlength="11"
+            required>
+          <span class="error-message" *ngIf="touched.Telefono && errors.Telefono">
+            {{ errors.Telefono }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="contrasena">Contraseña</label>
+          <input 
+            type="password" 
+            id="contrasena" 
+            name="contrasena"
+            [(ngModel)]="cliente.Contrasena"
+            (ngModelChange)="onFieldChange('Contrasena')"
+            (blur)="onFieldChange('Contrasena')"
+            [class.error]="touched.Contrasena && errors.Contrasena"
+            placeholder="{{ mode === 'edit' ? 'Dejar vacío para mantener la actual' : 'Ingrese la contraseña' }}"
+            required>
+          <span class="error-message" *ngIf="touched.Contrasena && errors.Contrasena">
+            {{ errors.Contrasena }}
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+      <button class="btn btn-primary" (click)="onSave()" [disabled]="!isFormValid()">Guardar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="search-section">
+  <div class="search-container">
+    <label class="search-label" for="search">Buscar</label>
+    <input 
+      type="text" 
+      id="search" 
+      class="search-input" 
+      [(ngModel)]="searchValue"
+      (input)="onSearchChange()"
+      [placeholder]="placeholder">
+  </div>
+  <button class="btn-nuevo" (click)="onNewClick()">
+    Nuevo
+  </button>
+</div>

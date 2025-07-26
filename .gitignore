@@ -52,3 +52,44 @@ devsu/[Bb]uild[Ll]og.*
 devsu/*.VisualState.xml
 devsu/TestResult.xml
 devsu/nunit-*.xml
+
+# Compiled output
+devsu-front/dist
+devsu-front/tmp
+devsu-front/out-tsc
+devsu-front/bazel-out
+
+# Node
+devsu-front/node_modules
+devsu-front/npm-debug.log
+devsu-front/yarn-error.log
+
+# IDEs and editors
+devsu-front/.idea/
+devsu-front/.project
+devsu-front/.classpath
+devsu-front/.c9/
+devsu-front/*.launch
+devsu-front/.settings/
+devsu-front/*.sublime-workspace
+
+# Visual Studio Code
+devsu-front/.vscode/*
+devsu-front/!.vscode/settings.json
+devsu-front/!.vscode/tasks.json
+devsu-front/!.vscode/launch.json
+devsu-front/!.vscode/extensions.json
+devsu-front/.history/*
+
+# Miscellaneous
+devsu-front/.angular/cache
+devsu-front/.sass-cache/
+devsu-front/connect.lock
+devsu-front/coverage
+devsu-front/libpeerconnection.log
+devsu-front/testem.log
+devsu-front/typings
+
+# System files
+devsu-front/.DS_Store
+devsu-front/Thumbs.db

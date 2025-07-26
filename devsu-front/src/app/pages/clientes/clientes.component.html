@@ -1,0 +1,141 @@
+<div class="page-container">
+  <div class="content-header">
+    <h2>Clientes</h2>
+  </div>
+
+  <app-search-bar 
+    placeholder="Buscar por nombre, identificación, dirección..."
+    (searchChange)="onSearch($event)"
+    (newClick)="onNewCliente()">
+  </app-search-bar>
+
+  <div class="table-container">
+    <div class="table-placeholder" *ngIf="filteredClientes.length === 0">
+      <p>No hay clientes registrados</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
+    </div>
+    
+    <table *ngIf="filteredClientes.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Identificación</th>
+          <th>Género</th>
+          <th>Edad</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of filteredClientes">
+          <td>{{ cliente.Nombre }}</td>
+          <td>{{ cliente.Identificacion }}</td>
+          <td>{{ cliente.Genero }}</td>
+          <td>{{ cliente.Edad }}</td>
+          <td>{{ cliente.Direccion }}</td>
+          <td>{{ cliente.Telefono }}</td>
+          <td>
+            <span class="status" [class.active]="cliente.Estado" [class.inactive]="!cliente.Estado">
+              {{ cliente.Estado ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="Editar" (click)="onEditCliente(cliente)">✏️</button>
+              <button class="btn-icon" 
+                      [title]="!cliente.Estado ? 'No se puede eliminar un cliente inactivo' : 'Eliminar'" 
+                      (click)="onDeleteCliente(cliente)"
+                      [disabled]="!cliente.Estado"
+                      [class.disabled]="!cliente.Estado">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination" *ngIf="totalItems > 0">
+      <div class="pagination-info">
+        <span>Mostrando {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} de {{ totalItems }} clientes</span>
+        <div class="page-size-selector">
+          <label>Mostrar:</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [value]="10">10</option>
+            <option [value]="15">15</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span>por página</span>
+        </div>
+      </div>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(1)">
+          Primera
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          Anterior
+        </button>
+        
+        <span class="page-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            class="pagination-btn page-number"
+            [class.active]="page === currentPage"
+            [disabled]="page === '...'"
+            (click)="page !== '...' && onPageChange(+page)">
+            {{ page }}
+          </button>
+        </span>
+        
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)">
+          Siguiente
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(totalPages)">
+          Última
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-modal-cliente 
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [clienteToEdit]="selectedCliente"
+    (closeModal)="onCloseModal()"
+    (saveCliente)="onSaveCliente($event)">
+  </app-modal-cliente>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
+
+  <app-confirmation-modal
+    [isOpen]="isConfirmationModalOpen"
+    title="Eliminar Cliente"
+    [message]="'¿Está seguro de que desea eliminar al cliente ' + (clienteToDelete?.Nombre || '') + '?'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation-modal>
+</div>

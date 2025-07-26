@@ -1,0 +1,75 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Nuevo Movimiento</h3>
+      <button class="close-button" (click)="onClose()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+          <label for="tipoMovimiento">Tipo de Movimiento</label>
+          <select 
+            id="tipoMovimiento" 
+            name="tipoMovimiento"
+            [(ngModel)]="movimiento.tipoMovimiento"
+            (ngModelChange)="onFieldChange('tipoMovimiento')"
+            (blur)="onFieldChange('tipoMovimiento')"
+            [class.error]="touched.tipoMovimiento && errors.tipoMovimiento"
+            required>
+            <option value="">Seleccione</option>
+            <option value="Debito">Débito</option>
+            <option value="Credito">Crédito</option>
+          </select>
+          <span class="error-message" *ngIf="touched.tipoMovimiento && errors.tipoMovimiento">
+            {{ errors.tipoMovimiento }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="valor">Valor</label>
+          <input 
+            type="number" 
+            id="valor" 
+            name="valor"
+            [(ngModel)]="movimiento.valor"
+            (ngModelChange)="onFieldChange('valor')"
+            (blur)="onFieldChange('valor')"
+            [class.error]="touched.valor && errors.valor"
+            placeholder="Ingrese el valor"
+            min="0.01"
+            step="0.01"
+            required>
+          <span class="error-message" *ngIf="touched.valor && errors.valor">
+            {{ errors.valor }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="cuenta">Cuenta</label>
+          <select 
+            id="cuenta" 
+            name="cuenta"
+            [(ngModel)]="movimiento.numeroCuenta"
+            (ngModelChange)="onFieldChange('numeroCuenta')"
+            (blur)="onFieldChange('numeroCuenta')"
+            [class.error]="touched.numeroCuenta && errors.numeroCuenta"
+            required>
+            <option value="">Seleccione una cuenta</option>
+            <option *ngFor="let cuenta of activeCuentas" [value]="cuenta.NumeroCuenta">
+              {{ cuenta.NombreCliente }} - {{ cuenta.NumeroCuenta }}
+            </option>
+          </select>
+          <span class="error-message" *ngIf="touched.numeroCuenta && errors.numeroCuenta">
+            {{ errors.numeroCuenta }}
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+      <button class="btn btn-primary" (click)="onSave()" [disabled]="!isFormValid()">Guardar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ mode === 'create' ? 'Nueva Cuenta' : 'Editar Cuenta' }}</h3>
+      <button class="close-button" (click)="onClose()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <form>
+        <div class="form-group" *ngIf="mode === 'edit'">
+          <label for="numeroCuenta">Número de Cuenta</label>
+          <input 
+            type="text" 
+            id="numeroCuenta" 
+            name="numeroCuenta"
+            [(ngModel)]="cuenta.NumeroCuenta"
+            [class.error]="touched.NumeroCuenta && errors.NumeroCuenta"
+            placeholder="Ingrese el número de cuenta"
+            disabled
+            required>
+          <span class="error-message" *ngIf="touched.NumeroCuenta && errors.NumeroCuenta">
+            {{ errors.NumeroCuenta }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="tipoCuenta">Tipo de Cuenta</label>
+          <select 
+            id="tipoCuenta" 
+            name="tipoCuenta"
+            [(ngModel)]="cuenta.TipoCuenta"
+            (ngModelChange)="onFieldChange('TipoCuenta')"
+            (blur)="onFieldChange('TipoCuenta')"
+            [class.error]="touched.TipoCuenta && errors.TipoCuenta"
+            required>
+            <option value="">Seleccione</option>
+            <option value="Ahorro">Ahorro</option>
+            <option value="Corriente">Corriente</option>
+          </select>
+          <span class="error-message" *ngIf="touched.TipoCuenta && errors.TipoCuenta">
+            {{ errors.TipoCuenta }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="saldoInicial">Saldo Inicial</label>
+          <input 
+            type="text" 
+            id="saldoInicial" 
+            name="saldoInicial"
+            [(ngModel)]="cuenta.SaldoInicial"
+            (input)="onFieldChange('SaldoInicial')"
+            (blur)="onFieldChange('SaldoInicial')"
+            [class.error]="touched.SaldoInicial && errors.SaldoInicial"
+            placeholder="Ingrese el saldo inicial"
+            required>
+          <span class="error-message" *ngIf="touched.SaldoInicial && errors.SaldoInicial">
+            {{ errors.SaldoInicial }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="cliente">Cliente</label>
+          <select 
+            id="cliente" 
+            name="cliente"
+            [(ngModel)]="cuenta.nombreCliente"
+            (ngModelChange)="onFieldChange('nombreCliente')"
+            (blur)="onFieldChange('nombreCliente')"
+            [class.error]="touched.nombreCliente && errors.nombreCliente"
+            required>
+            <option value="">Seleccione un cliente</option>
+            <option *ngFor="let cliente of activeClientes" [value]="cliente.Nombre">
+              {{ cliente.Nombre }} - {{ cliente.Identificacion }}{{ !cliente.Estado ? ' (Inactivo)' : '' }}
+            </option>
+          </select>
+          <span class="error-message" *ngIf="touched.nombreCliente && errors.nombreCliente">
+            {{ errors.nombreCliente }}
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+      <button class="btn btn-primary" (click)="onSave()" [disabled]="!isFormValid()">Guardar</button>
+    </div>
+  </div>
+</div>

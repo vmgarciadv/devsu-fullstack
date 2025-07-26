@@ -1,0 +1,143 @@
+<div class="page-container">
+  <div class="content-header">
+    <h2>Estado de Cuenta</h2>
+  </div>
+
+  <div class="filter-section">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="cliente">Cliente</label>
+        <select 
+          id="cliente" 
+          name="cliente"
+          [(ngModel)]="selectedCliente"
+          class="form-control">
+          <option value="">Seleccione un cliente</option>
+          <option *ngFor="let cliente of clientes" [value]="cliente.Nombre">
+            {{ cliente.Nombre }} - {{ cliente.Identificacion }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Tipo de búsqueda</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input 
+              type="radio" 
+              name="dateMode" 
+              [value]="false" 
+              [(ngModel)]="useDateRange"
+              (change)="toggleDateMode()">
+            Fecha específica
+          </label>
+          <label class="radio-label">
+            <input 
+              type="radio" 
+              name="dateMode" 
+              [value]="true" 
+              [(ngModel)]="useDateRange"
+              (change)="toggleDateMode()">
+            Rango de fechas
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-group" *ngIf="!useDateRange">
+        <label for="fecha">Fecha</label>
+        <input 
+          type="date" 
+          id="fecha" 
+          name="fecha"
+          [(ngModel)]="singleDate"
+          class="form-control">
+      </div>
+
+      <div class="filter-group" *ngIf="useDateRange">
+        <label for="fechaInicio">Fecha Inicio</label>
+        <input 
+          type="date" 
+          id="fechaInicio" 
+          name="fechaInicio"
+          [(ngModel)]="fechaInicio"
+          class="form-control">
+      </div>
+
+      <div class="filter-group" *ngIf="useDateRange">
+        <label for="fechaFin">Fecha Fin</label>
+        <input 
+          type="date" 
+          id="fechaFin" 
+          name="fechaFin"
+          [(ngModel)]="fechaFin"
+          class="form-control">
+      </div>
+
+      <div class="filter-group">
+        <button class="btn btn-primary" (click)="onGenerateReport()">Generar Reporte</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="download-section" *ngIf="reportes.length > 0">
+    <button class="btn btn-secondary" (click)="downloadPDF()">
+      <span>📋</span> Descargar PDF
+    </button>
+    <button class="btn btn-secondary" (click)="downloadJSON()">
+      <span>📄</span> Descargar JSON
+    </button>
+  </div>
+
+  <div class="table-container" *ngIf="reportes.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Número Cuenta</th>
+          <th>Tipo Cuenta</th>
+          <th>Saldo Inicial</th>
+          <th>Estado</th>
+          <th>Movimiento</th>
+          <th>Saldo Disponible</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reporte of reportes">
+          <td>
+            {{ reporte.Fecha | date:'dd/MM/yyyy' }}
+          </td>
+          <td>{{ reporte.Cliente }}</td>
+          <td>{{ reporte.NumeroCuenta }}</td>
+          <td>{{ reporte.TipoCuenta }}</td>
+          <td>{{ reporte.SaldoInicial | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>
+            <span class="status" [class.active]="reporte.Estado" [class.inactive]="!reporte.Estado">
+              {{ reporte.Estado ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td [class.debit]="reporte.TotalMovimientos < 0" [class.credit]="reporte.TotalMovimientos > 0">
+            {{ reporte.TotalMovimientos | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+          <td>{{ reporte.SaldoDisponible | currency:'USD':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-container" *ngIf="reportes.length === 0">
+    <div class="table-placeholder">
+      <p>Seleccione un cliente y fecha para generar el reporte</p>
+      <p class="subtitle">El reporte mostrará todos los movimientos del cliente en el período seleccionado</p>
+    </div>
+  </div>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
+</div>

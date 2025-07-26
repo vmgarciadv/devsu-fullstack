@@ -1,0 +1,115 @@
+<div class="page-container">
+  <div class="content-header">
+    <h2>Movimientos</h2>
+  </div>
+
+  <app-search-bar 
+    placeholder="Buscar por número de cuenta, tipo de movimiento, saldo..."
+    (searchChange)="onSearch($event)"
+    (newClick)="onNewMovimiento()">
+  </app-search-bar>
+
+  <div class="table-container">
+    <div class="table-placeholder" *ngIf="filteredMovimientos.length === 0">
+      <p>No hay movimientos registrados</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar un movimiento</p>
+    </div>
+    
+    <table *ngIf="filteredMovimientos.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Número de Cuenta</th>
+          <th>Tipo de Movimiento</th>
+          <th>Valor</th>
+          <th>Saldo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movimiento of filteredMovimientos">
+          <td>{{ movimiento.Fecha | date:'dd/MM/yyyy' }}</td>
+          <td>{{ movimiento.NumeroCuenta }}</td>
+          <td>{{ movimiento.TipoMovimiento }}</td>
+          <td [class.debit]="movimiento.Valor < 0" [class.credit]="movimiento.Valor > 0">
+            {{ movimiento.Valor | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+          <td>{{ movimiento.Saldo | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>
+            N/A
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination" *ngIf="totalItems > 0">
+      <div class="pagination-info">
+        <span>Mostrando {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} de {{ totalItems }} movimientos</span>
+        <div class="page-size-selector">
+          <label>Mostrar:</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [value]="10">10</option>
+            <option [value]="15">15</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span>por página</span>
+        </div>
+      </div>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(1)">
+          Primera
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          Anterior
+        </button>
+        
+        <span class="page-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            class="pagination-btn page-number"
+            [class.active]="page === currentPage"
+            [disabled]="page === '...'"
+            (click)="page !== '...' && onPageChange(+page)">
+            {{ page }}
+          </button>
+        </span>
+        
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)">
+          Siguiente
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(totalPages)">
+          Última
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-modal-movimiento
+    [isOpen]="isModalOpen"
+    (closeModal)="onCloseModal()"
+    (saveMovimiento)="onSaveMovimiento($event)">
+  </app-modal-movimiento>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
+</div>
