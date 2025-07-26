@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # SQL Server database
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: devsu-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SuperPassw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - devsu-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SuperPassw0rd' -C || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+  # ASP.NET Core Web API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devsu-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=db;Database=DevsuDB;User=sa;Password=SuperPassw0rd;TrustServerCertificate=true
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devsu-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  devsu-network:
+    driver: bridge

@@ -1,0 +1,6 @@
+@devsu_HostAddress = http://localhost:5156
+
+GET {{devsu_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
