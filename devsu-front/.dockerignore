@@ -1,0 +1,16 @@
+node_modules
+.angular
+dist
+.git
+.gitignore
+README.md
+.editorconfig
+.browserslistrc
+karma.conf.js
+tsconfig.spec.json
+.vscode
+.idea
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
