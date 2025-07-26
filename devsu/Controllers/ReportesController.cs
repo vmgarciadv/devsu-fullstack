@@ -44,8 +44,8 @@ namespace devsu.Controllers
                 request = new ReporteRequestDto
                 {
                     Cliente = cliente,
-                    FechaInicio = fechaInicio.Value,
-                    FechaFin = fechaFin.Value,
+                    FechaInicio = fechaInicio.Value.Date,
+                    FechaFin = fechaFin.Value.Date.AddDays(1).AddSeconds(-1),
                     TimezoneOffset = timezone
                 };
             }

@@ -79,7 +79,7 @@ docker-compose up -d api
 ### Ejecutar comandos en un contenedor
 ```bash
 # Acceder a la base de datos
-docker exec -it devsu-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U user -P password -C
+docker exec -it devsu-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SuperPassw0rd' -C
 
 # Ver logs del API
 docker logs devsu-api
@@ -87,6 +87,48 @@ docker logs devsu-api
 # Acceder al contenedor del frontend
 docker exec -it devsu-frontend sh
 ```
+
+## Inicializar la base de datos con datos de ejemplo
+
+Si deseas cargar la base de datos con el esquema completo y datos de ejemplo, puedes ejecutar el script `BaseDatos.sql`:
+
+### Opción 1: Usando sqlcmd desde el host
+```bash
+# Copiar el archivo SQL al contenedor
+docker cp devsu/BaseDatos.sql devsu-sqlserver:/tmp/
+
+# Ejecutar el script
+docker exec -it devsu-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SuperPassw0rd' -C -i /tmp/BaseDatos.sql
+```
+
+### Opción 2: Conectarse interactivamente y ejecutar comandos
+```bash
+# Conectarse a SQL Server
+docker exec -it devsu-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SuperPassw0rd' -C
+
+# Una vez conectado, ejecutar:
+1> USE master;
+2> GO
+1> :r /tmp/BaseDatos.sql
+2> GO
+```
+
+### Opción 3: Usando un cliente SQL
+Puedes conectarte con cualquier cliente SQL Server (Azure Data Studio, SSMS, DBeaver, etc.) usando:
+- **Servidor**: localhost,1433
+- **Usuario**: sa
+- **Contraseña**: SuperPassw0rd
+- **Base de datos**: devsu
+
+Luego ejecutar el contenido del archivo `devsu/BaseDatos.sql`.
+
+**Nota**: El script `BaseDatos.sql` incluye:
+- Creación de la base de datos (si no existe)
+- Esquema completo de tablas
+- Índices para optimización
+- Procedimiento almacenado `sp_GenerarReporteEstadoCuenta`
+- Datos de ejemplo (25 clientes con cuentas y movimientos)
+- Cliente de prueba "Victor" con movimientos en julio 2025
 
 ## Configuración de red
 
